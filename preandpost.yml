@@ -6,5 +6,4 @@
   tasks:
     - name: check the running-config against master config
       cisco.ios.ios_config:
-        diff_against: intended
-        intended_config: "{{ lookup('file', 'backup.cfg') }}"
+        diff_against: running
