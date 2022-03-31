@@ -4,6 +4,7 @@
   gather_facts: no
 
   tasks:
-    - name: check the startup-config against the running-config
+    - name: check the running-config against master config
       cisco.ios.ios_config:
-        diff_against: startup
+        diff_against: intended
+        intended_config: "{{ lookup('file', 'startup.cfg') }}"
