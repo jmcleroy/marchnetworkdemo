@@ -1,0 +1,31 @@
+---
+- hosts: all
+  connection: network_cli
+  gather_facts: no
+  vars:
+    ntp_servers:
+      - ntp server 172.16.1.1
+      - ntp server 172.16.1.77
+      - ntp server 172.16.1.75
+
+  tasks:
+    - name: pulling ntp servers on device
+      cisco.ios.ios_command:
+        commands: show run | i ntp
+      register: output
+
+    - name: look at output
+      debug:
+        var: output.stdout_lines
+
+    - name: compare ntp servers and remove erroroneous entries
+      cisco.ios.ios_config:
+        lines: no {{ item }}
+      loop: "{{ output.stdout_lines[0] }}"
+      when: item not in ntp_servers
+
+
+    - name: add ntp servers
+      cisco.ios.ios_config:
+        lines: "{{ item }}"
+      loop: "{{ ntp_servers }}"
